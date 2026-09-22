@@ -345,16 +345,25 @@ def handle_requests():
     if count >= KEY_LIMIT:
         return jsonify({"error": "Daily limit reached", "remains": f"(0/{KEY_LIMIT})"}), 429
 
-    # Generate token for checking (try multiple accounts)
+    # Generate a verification token. Try every configured account instead of
+    # failing just because the first few accounts are expired/invalid.
     check_token = None
-    for account in accounts[:5]:
+    checked_accounts = 0
+    for account in accounts:
+        checked_accounts += 1
         check_token = asyncio.run(get_valid_token(account['uid'], account['password']))
         if check_token:
             print(f"✅ Token generated with UID: {account['uid']}")
             break
-    
+        print(f"⚠️ Token failed for account UID: {account['uid']}")
+
     if not check_token:
-        return jsonify({"error": "Token generation failed - no valid accounts"}), 500
+        return jsonify({
+            "error": "Token generation failed - all configured accounts were rejected",
+            "server": server_name,
+            "accounts_checked": checked_accounts,
+            "hint": f"Check account_{server_name.lower()}.txt credentials and the JWT service"
+        }), 502
     
     encrypted_uid = enc(uid)
 
