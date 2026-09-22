@@ -43,23 +43,25 @@ def get_today_midnight_timestamp():
     return midnight.timestamp()
 
 def load_accounts(server_name):
-    """Load UID:Password from server-specific file"""
+    """Load UID:Password from server-specific file."""
     try:
-        # Map server to filename
-        if server_name == "IND":
-            filename = "account_ind.txt"
-        elif server_name in {"BR", "US", "SAC", "NA"}:
-            filename = "account_br.txt"
-        else:  # BD and others
-            filename = "account_bd.txt"
+        # Keep account pools isolated by region.
+        account_files = {
+            "IND": "account_ind.txt",
+            "BR": "account_br.txt",
+            "US": "account_br.txt",
+            "SAC": "account_br.txt",
+            "NA": "account_br.txt",
+            "ME": "account_me.txt",
+            "BD": "account_bd.txt",
+            "RU": "account_bd.txt",
+        }
+        filename = account_files.get(server_name, "account_me.txt")
         
         # Check if file exists
         if not os.path.exists(filename):
-            print(f"⚠️ {filename} not found, trying account_ind.txt")
-            filename = "account_ind.txt"
-            if not os.path.exists(filename):
-                print(f"❌ No account file found")
-                return []
+            print(f"⚠️ {filename} not found for {server_name}")
+            return []
         
         accounts = []
         print(f"📂 Loading from: {filename} for server {server_name}")
@@ -286,6 +288,7 @@ def get_player_info(encrypted_uid, server_name, token):
     elif server_name in {"BR", "US", "SAC", "NA"}:
         url = "https://client.us.freefiremobile.com/GetPlayerPersonalShow"
     else:
+        # ME/BD/RU use the global endpoint used by this project.
         url = "https://clientbp.ggpolarbear.com/GetPlayerPersonalShow"
 
     edata = bytes.fromhex(encrypted_uid)
@@ -317,18 +320,19 @@ def handle_requests():
         return jsonify({"error": "UID and server_name are required"}), 400
 
     # Valid servers
-    valid_servers = ["IND", "BR", "US", "SAC", "NA", "BD","RU"]
+    valid_servers = ["IND", "BR", "US", "SAC", "NA", "ME", "BD", "RU"]
     if server_name not in valid_servers:
         return jsonify({"error": f"Invalid server. Use: {valid_servers}"}), 400
 
-    # Load accounts for this server
+    # Load accounts only from the requested region.
+    # Do not silently mix another region's account pool.
     accounts = load_accounts(server_name)
     if not accounts:
-        # Try fallback to IND
-        accounts = load_accounts("IND")
-        if not accounts:
-            return jsonify({"error": f"No accounts found for server {server_name}"}), 500
-        print(f"⚠️ Using IND accounts as fallback for {server_name}")
+        return jsonify({
+            "error": f"No accounts found for server {server_name}",
+            "server": server_name,
+            "hint": f"Add UID:PASSWORD lines to account_{server_name.lower()}.txt"
+        }), 500
     
     # Check daily limit
     today_midnight = get_today_midnight_timestamp()
@@ -424,6 +428,7 @@ if __name__ == '__main__':
     print("📁 Account files:")
     print("   - account_ind.txt (IND server)")
     print("   - account_br.txt (BR/US/SAC/NA servers)")
+    print("   - account_me.txt (ME server)")
     print("   - account_bd.txt (BD/RU server)")
     print("🧠 Smart feature: Tracks which accounts already liked")
     print("⚡ Only fresh accounts will send likes")
