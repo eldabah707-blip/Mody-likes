@@ -194,10 +194,22 @@ async def send_like(encrypted_uid, token, url):
 
         async with aiohttp.ClientSession() as session:
             async with session.post(url, data=edata, headers=headers, timeout=10) as response:
-                body = await response.text()
-                return response.status, body[:300]
+                raw = await response.read()
+                content_type = response.headers.get('Content-Type', '')
+                try:
+                    body_text = raw.decode('utf-8', errors='replace')
+                except Exception:
+                    body_text = ''
+                # Keep diagnostics bounded and never include Authorization/token data.
+                detail = {
+                    'content_type': content_type,
+                    'body_text': body_text[:500],
+                    'body_hex': raw[:160].hex(),
+                    'body_length': len(raw),
+                }
+                return response.status, detail
     except Exception as exc:
-        return 500, str(exc)[:300]
+        return 500, {'error': str(exc)[:300]}
 
 async def process_account(target_uid, encrypted_uid, account, url, semaphore, server_name):
     """Process single account with smart checking"""
@@ -260,16 +272,19 @@ async def send_all_likes(target_uid, server_name, url):
     failed = 0
     status_counts = {}
     samples = []
+    success_samples = []
     for r in results:
         if isinstance(r, tuple) and len(r) == 3:
             status, uid, detail = r
             status_counts[str(status)] = status_counts.get(str(status), 0) + 1
             if status == 200:
                 successful += 1
+                if len(success_samples) < 5:
+                    success_samples.append({'status': status, 'detail': detail})
             else:
                 failed += 1
                 if len(samples) < 5:
-                    samples.append({'account': uid, 'status': status, 'detail': detail})
+                    samples.append({'status': status, 'detail': detail})
         else:
             failed += 1
     
@@ -280,7 +295,8 @@ async def send_all_likes(target_uid, server_name, url):
         'already_liked': len(already_liked),
         'fresh_used': len(fresh_accounts[:2000]),
         'http_status_counts': status_counts,
-        'failure_samples': samples
+        'failure_samples': samples,
+        'success_samples': success_samples
     }
 
 def enc(uid):
