@@ -3,16 +3,67 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DEV LIKE API Like API</title>
+<title>DEV LIKE API</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;color:#fff}body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;background:radial-gradient(circle at 80% 15%,#5b173d 0,transparent 34%),radial-gradient(circle at 20% 10%,#17264c 0,transparent 38%),#090d17}.card{width:min(390px,100%);padding:24px 18px;border:1px solid #ffffff1c;border-radius:22px;background:#181b2bcc;box-shadow:0 18px 45px #0006;text-align:center}.title{font-size:34px;font-weight:800;line-height:1.08;margin:0 0 16px}.status{display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border-radius:25px;background:#00ffaa12;border:1px solid #00ffaa38;color:#22f0a8;font-size:15px;font-weight:700}.dot{width:10px;height:10px;border-radius:50%;background:#12ef9e;box-shadow:0 0 12px #12ef9e}.endpoint{margin-top:18px;padding:16px 12px;border-radius:14px;background:#06081099;color:#d9d8ff;font:16px ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-word}.credit{margin:18px 0 12px;font-size:16px}.credit a{color:#fff;text-decoration:none}.channel{display:block;padding:13px 12px;border-radius:14px;background:linear-gradient(90deg,#4d3fff,#00b7d9);color:#fff;text-decoration:none;font-size:16px;font-weight:800}.small{margin-top:11px;color:#a9afc2;font-size:12px}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;color:#fff}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;background:radial-gradient(circle at 80% 15%,#5b173d 0,transparent 34%),radial-gradient(circle at 20% 10%,#17264c 0,transparent 38%),#090d17}
+.card{width:min(430px,100%);padding:24px 18px;border:1px solid #ffffff1c;border-radius:22px;background:#181b2bcc;box-shadow:0 18px 45px #0006;text-align:center}
+.title{font-size:34px;font-weight:800;line-height:1.08;margin:0 0 16px}.status{display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border-radius:25px;background:#00ffaa12;border:1px solid #00ffaa38;color:#22f0a8;font-size:15px;font-weight:700}
+.dot{width:10px;height:10px;border-radius:50%;background:#12ef9e;box-shadow:0 0 12px #12ef9e}
+form{margin-top:18px;text-align:left}label{display:block;margin:12px 2px 7px;color:#cfd4e5;font-size:13px;font-weight:700}
+input,select,button{width:100%;border:0;border-radius:13px;padding:14px 13px;font-size:16px}input,select{background:#060810;color:#fff;border:1px solid #ffffff18;outline:none}
+button{margin-top:16px;background:linear-gradient(90deg,#4d3fff,#00b7d9);color:#fff;font-weight:800;cursor:pointer}
+button:disabled{opacity:.6;cursor:wait}.result{display:none;margin-top:16px;padding:14px;border-radius:13px;background:#060810;text-align:left;white-space:pre-wrap;word-break:break-word;color:#d9d8ff;font:13px ui-monospace,SFMono-Regular,Menlo,monospace}
+.endpoint{margin-top:18px;padding:12px;border-radius:14px;background:#06081099;color:#aeb5ca;font:12px ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-word}
+.credit{margin:18px 0 12px;font-size:16px}.credit a{color:#fff;text-decoration:none}.channel{display:block;padding:13px 12px;border-radius:14px;background:linear-gradient(90deg,#4d3fff,#00b7d9);color:#fff;text-decoration:none;font-size:16px;font-weight:800}.small{margin-top:11px;color:#a9afc2;font-size:12px}
 </style>
 </head>
 <body><main class="card">
-<h1 class="title">DEV LIKE API<br>Like API</h1>
+<h1 class="title">DEV LIKE API</h1>
 <div class="status"><span class="dot"></span>API IS RUNNING</div>
-<div class="endpoint">/like?uid={uid}&amp;server_name=bd&amp;key={your_key}</div>
+
+<form id="likeForm">
+<label for="uid">Player UID</label>
+<input id="uid" name="uid" inputmode="numeric" autocomplete="off" placeholder="Enter player UID" required>
+
+<label for="server">Server</label>
+<select id="server" name="server" required>
+<option value="ME">Middle East (ME)</option>
+<option value="BD">Bangladesh (BD)</option>
+<option value="IND">India (IND)</option>
+<option value="BR">Brazil (BR)</option>
+<option value="US">United States (US)</option>
+<option value="SAC">South America (SAC)</option>
+<option value="NA">North America (NA)</option>
+<option value="RU">Russia (RU)</option>
+</select>
+
+<button id="submitBtn" type="submit">SEND LIKES</button>
+<div id="result" class="result"></div>
+</form>
+
+<div class="endpoint">GET /like?uid={uid}&amp;server_name={server}&amp;key={your_key}</div>
 <div class="credit">Telegram Owner: <a href="https://t.me/SIAM_CODEX">@founderdvx</a></div>
 <a class="channel" href="https://t.me/DEV_FILE_BOT">⚡ TELEGRAM CHANNEL OFC</a>
-<div class="small"></div>
-</main></body></html>
+<div class="small">ME is supported with its own account pool: account_me.txt</div>
+</main>
+<script>
+const form=document.getElementById('likeForm');
+const result=document.getElementById('result');
+const btn=document.getElementById('submitBtn');
+
+form.addEventListener('submit',async(e)=>{
+  e.preventDefault();
+  const uid=document.getElementById('uid').value.trim();
+  const server=document.getElementById('server').value;
+  if(!/^\d+$/.test(uid)){result.style.display='block';result.textContent='Invalid UID';return;}
+  btn.disabled=true; result.style.display='block'; result.textContent='Processing...';
+  try{
+    const r=await fetch(`/like?uid=${encodeURIComponent(uid)}&server_name=${encodeURIComponent(server)}&key=SIAM`);
+    const data=await r.json();
+    result.textContent=JSON.stringify(data,null,2);
+  }catch(err){result.textContent='Request failed: '+err.message;}
+  finally{btn.disabled=false;}
+});
+</script>
+</body></html>
