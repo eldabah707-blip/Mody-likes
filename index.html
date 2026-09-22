@@ -3,67 +3,57 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DEV LIKE API</title>
+<meta name="theme-color" content="#080b16">
+<title>MODY ELBANA • Free Fire Like API</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;color:#fff}
-body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;background:radial-gradient(circle at 80% 15%,#5b173d 0,transparent 34%),radial-gradient(circle at 20% 10%,#17264c 0,transparent 38%),#090d17}
-.card{width:min(430px,100%);padding:24px 18px;border:1px solid #ffffff1c;border-radius:22px;background:#181b2bcc;box-shadow:0 18px 45px #0006;text-align:center}
-.title{font-size:34px;font-weight:800;line-height:1.08;margin:0 0 16px}.status{display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border-radius:25px;background:#00ffaa12;border:1px solid #00ffaa38;color:#22f0a8;font-size:15px;font-weight:700}
-.dot{width:10px;height:10px;border-radius:50%;background:#12ef9e;box-shadow:0 0 12px #12ef9e}
-form{margin-top:18px;text-align:left}label{display:block;margin:12px 2px 7px;color:#cfd4e5;font-size:13px;font-weight:700}
-input,select,button{width:100%;border:0;border-radius:13px;padding:14px 13px;font-size:16px}input,select{background:#060810;color:#fff;border:1px solid #ffffff18;outline:none}
-button{margin-top:16px;background:linear-gradient(90deg,#4d3fff,#00b7d9);color:#fff;font-weight:800;cursor:pointer}
-button:disabled{opacity:.6;cursor:wait}.result{display:none;margin-top:16px;padding:14px;border-radius:13px;background:#060810;text-align:left;white-space:pre-wrap;word-break:break-word;color:#d9d8ff;font:13px ui-monospace,SFMono-Regular,Menlo,monospace}
-.endpoint{margin-top:18px;padding:12px;border-radius:14px;background:#06081099;color:#aeb5ca;font:12px ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-word}
-.credit{margin:18px 0 12px;font-size:16px}.credit a{color:#fff;text-decoration:none}.channel{display:block;padding:13px 12px;border-radius:14px;background:linear-gradient(90deg,#4d3fff,#00b7d9);color:#fff;text-decoration:none;font-size:16px;font-weight:800}.small{margin-top:11px;color:#a9afc2;font-size:12px}
+:root{--bg:#070a12;--card:#101625cc;--line:#ffffff16;--text:#f7f9ff;--muted:#98a3bb;--a:#7c5cff;--b:#16d9ff;--ok:#20e59a;--danger:#ff6b8b}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:radial-gradient(circle at 10% 0%,#30206d 0,transparent 30%),radial-gradient(circle at 95% 10%,#004e68 0,transparent 28%),var(--bg)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(#fff00006 1px,transparent 1px),linear-gradient(90deg,#fff00006 1px,transparent 1px);background-size:38px 38px;mask-image:linear-gradient(to bottom,black,transparent 85%)}
+.wrap{width:min(1060px,92%);margin:auto;padding:42px 0 30px}.nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:48px}.brand{font-weight:900;letter-spacing:.08em}.brand span{color:var(--b)}.pill{font-size:12px;color:#cbd2e6;border:1px solid var(--line);background:#ffffff08;border-radius:999px;padding:9px 13px}.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:28px;align-items:stretch}.hero-copy{padding:25px 4px}.eyebrow{display:inline-flex;gap:8px;align-items:center;color:#b9c4dd;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.13em}.pulse{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 15px var(--ok)}h1{font-size:clamp(42px,7vw,76px);line-height:.95;margin:16px 0;background:linear-gradient(100deg,#fff 20%,#b8b5ff 55%,#6ce9ff);-webkit-background-clip:text;background-clip:text;color:transparent} .lead{max-width:600px;color:var(--muted);font-size:17px;line-height:1.7}.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}.stat{border:1px solid var(--line);background:#ffffff08;border-radius:15px;padding:12px 15px}.stat b{display:block;font-size:19px}.stat small{color:var(--muted)}
+.card{border:1px solid var(--line);background:linear-gradient(180deg,#131a2add,#0c111ddd);border-radius:25px;padding:24px;box-shadow:0 24px 70px #0008;backdrop-filter:blur(18px)}.card h2{margin:0 0 5px;font-size:23px}.sub{color:var(--muted);font-size:13px;margin:0 0 18px}.field{margin:14px 0}label{display:block;font-size:12px;font-weight:800;color:#cdd4e5;margin:0 0 8px;text-transform:uppercase;letter-spacing:.08em}input,select,button{width:100%;border-radius:14px;padding:14px 15px;font-size:15px;border:1px solid var(--line);outline:none}input,select{background:#060912;color:#fff}input:focus,select:focus{border-color:#7c5cff88;box-shadow:0 0 0 4px #7c5cff14}button{border:0;color:#fff;font-weight:900;background:linear-gradient(100deg,var(--a),var(--b));cursor:pointer;box-shadow:0 12px 30px #5f56ff2b}button:disabled{opacity:.55;cursor:wait}.result{display:none;margin-top:15px;border:1px solid var(--line);background:#050810;padding:14px;border-radius:14px;font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;word-break:break-word;max-height:300px;overflow:auto}.ready{display:flex;justify-content:space-between;align-items:center;border:1px solid #20e59a2a;background:#20e59a0b;padding:11px 12px;border-radius:13px;margin-bottom:14px}.ready b{color:var(--ok);font-size:13px}.ready span{color:var(--muted);font-size:12px}.features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}.feature{padding:20px;border:1px solid var(--line);border-radius:19px;background:#ffffff06}.feature b{display:block;margin-bottom:6px}.feature p{margin:0;color:var(--muted);font-size:13px;line-height:1.6}.docs{margin-top:28px}.code{margin-top:10px;border:1px solid var(--line);background:#050810;border-radius:14px;padding:14px;color:#cbd3e8;font:12px/1.7 ui-monospace,monospace;overflow:auto}.footer{padding:28px 0 8px;text-align:center;color:#727d96;font-size:12px}.footer strong{color:#b9c2d7}.server-list{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}.server{padding:6px 9px;border-radius:9px;background:#ffffff08;border:1px solid var(--line);font-size:11px;color:#b8c2d7}.server.on{color:var(--ok);border-color:#20e59a25}
+@media(max-width:820px){.hero{grid-template-columns:1fr}.hero-copy{padding-top:0}.features{grid-template-columns:1fr}.nav{margin-bottom:28px}h1{font-size:52px}}
 </style>
 </head>
-<body><main class="card">
-<h1 class="title">DEV LIKE API</h1>
-<div class="status"><span class="dot"></span>API IS RUNNING</div>
-
+<body>
+<div class="wrap">
+<header class="nav"><div class="brand">MODY <span>ELBANA</span></div><div class="pill">FREE FIRE • API PANEL</div></header>
+<section class="hero">
+<div class="hero-copy">
+<div class="eyebrow"><i class="pulse"></i> System online</div>
+<h1>MODY ELBANA<br>LIKE API</h1>
+<p class="lead">A clean, fast control panel for your Free Fire Like API. Choose the correct region, submit a UID, and inspect the response in a professional dashboard.</p>
+<div class="stats"><div class="stat"><b>8</b><small>Regions</small></div><div class="stat"><b>REST</b><small>API endpoint</small></div><div class="stat"><b>24/7</b><small>Ready for deploy</small></div></div>
+</div>
+<div class="card">
+<div class="ready"><b>● API ONLINE</b><span id="healthText">Checking…</span></div>
+<h2>Send Likes</h2><p class="sub">Enter a player UID and select its server.</p>
 <form id="likeForm">
-<label for="uid">Player UID</label>
-<input id="uid" name="uid" inputmode="numeric" autocomplete="off" placeholder="Enter player UID" required>
-
-<label for="server">Server</label>
-<select id="server" name="server" required>
-<option value="ME">Middle East (ME)</option>
-<option value="BD">Bangladesh (BD)</option>
-<option value="IND">India (IND)</option>
-<option value="BR">Brazil (BR)</option>
-<option value="US">United States (US)</option>
-<option value="SAC">South America (SAC)</option>
-<option value="NA">North America (NA)</option>
-<option value="RU">Russia (RU)</option>
-</select>
-
-<button id="submitBtn" type="submit">SEND LIKES</button>
+<div class="field"><label for="uid">Player UID</label><input id="uid" inputmode="numeric" autocomplete="off" placeholder="e.g. 123456789" required></div>
+<div class="field"><label for="server">Server</label><select id="server" required></select></div>
+<button id="submitBtn" type="submit">SEND LIKES →</button>
 <div id="result" class="result"></div>
 </form>
-
-<div class="endpoint">GET /like?uid={uid}&amp;server_name={server}&amp;key={your_key}</div>
-<div class="credit">Telegram Owner: <a href="https://t.me/SIAM_CODEX">@founderdvx</a></div>
-<a class="channel" href="https://t.me/DEV_FILE_BOT">⚡ TELEGRAM CHANNEL OFC</a>
-<div class="small">ME is supported with its own account pool: account_me.txt</div>
-</main>
+</div>
+</section>
+<section class="features">
+<div class="feature"><b>🌍 Multi-region</b><p>Region routing is centralized so every server uses its configured client cluster and account pool.</p></div>
+<div class="feature"><b>🛡️ Better errors</b><p>Invalid UID, missing accounts, token failures, rate limits, and verification errors return clear JSON.</p></div>
+<div class="feature"><b>⚡ Modern UI</b><p>Responsive glass-style interface designed for mobile and desktop deployments.</p></div>
+</section>
+<section class="card docs">
+<h2>API Endpoint</h2><p class="sub">Compatible with the existing GET interface.</p>
+<div class="code">GET /like?uid={UID}&amp;server_name={SERVER}&amp;key={API_KEY}</div>
+<div id="serverList" class="server-list"></div>
+</section>
+<footer class="footer">Built for <strong>MODY ELBANA</strong> • Unofficial Free Fire community tool</footer>
+</div>
 <script>
-const form=document.getElementById('likeForm');
-const result=document.getElementById('result');
-const btn=document.getElementById('submitBtn');
-
-form.addEventListener('submit',async(e)=>{
-  e.preventDefault();
-  const uid=document.getElementById('uid').value.trim();
-  const server=document.getElementById('server').value;
-  if(!/^\d+$/.test(uid)){result.style.display='block';result.textContent='Invalid UID';return;}
-  btn.disabled=true; result.style.display='block'; result.textContent='Processing...';
-  try{
-    const r=await fetch(`/like?uid=${encodeURIComponent(uid)}&server_name=${encodeURIComponent(server)}&key=SIAM`);
-    const data=await r.json();
-    result.textContent=JSON.stringify(data,null,2);
-  }catch(err){result.textContent='Request failed: '+err.message;}
-  finally{btn.disabled=false;}
-});
+const form=document.getElementById('likeForm'), result=document.getElementById('result'), btn=document.getElementById('submitBtn');
+const select=document.getElementById('server'), health=document.getElementById('healthText'), list=document.getElementById('serverList');
+async function loadServers(){
+ try{const r=await fetch('/servers');const d=await r.json();select.innerHTML=d.servers.map(s=>`<option value="${s.code}" ${s.ready?'':'disabled'}>${s.code} — ${s.name}${s.ready?'':' (no accounts)'}</option>`).join('');list.innerHTML=d.servers.map(s=>`<span class="server ${s.ready?'on':''}">${s.code}: ${s.accounts}</span>`).join('');health.textContent=`${d.servers.filter(s=>s.ready).length}/${d.servers.length} regions ready`;}catch(e){health.textContent='Status unavailable';}
+}
+form.addEventListener('submit',async e=>{e.preventDefault();const uid=document.getElementById('uid').value.trim(),server=select.value;if(!/^\d+$/.test(uid)){result.style.display='block';result.textContent='UID must contain digits only.';return;}btn.disabled=true;result.style.display='block';result.textContent='Processing request…';try{const r=await fetch(`/like?uid=${encodeURIComponent(uid)}&server_name=${encodeURIComponent(server)}&key=SIAM`);const d=await r.json();result.textContent=JSON.stringify(d,null,2);}catch(err){result.textContent='Request failed: '+err.message;}finally{btn.disabled=false;}});
+loadServers();
 </script>
 </body></html>
