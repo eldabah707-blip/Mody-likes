@@ -1,59 +1,161 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#080b16">
-<title>MODY ELBANA • Free Fire Like API</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070914">
+<title>MODY ELBANA • Like API</title>
 <style>
-:root{--bg:#070a12;--card:#101625cc;--line:#ffffff16;--text:#f7f9ff;--muted:#98a3bb;--a:#7c5cff;--b:#16d9ff;--ok:#20e59a;--danger:#ff6b8b}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:radial-gradient(circle at 10% 0%,#30206d 0,transparent 30%),radial-gradient(circle at 95% 10%,#004e68 0,transparent 28%),var(--bg)}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(#fff00006 1px,transparent 1px),linear-gradient(90deg,#fff00006 1px,transparent 1px);background-size:38px 38px;mask-image:linear-gradient(to bottom,black,transparent 85%)}
-.wrap{width:min(1060px,92%);margin:auto;padding:42px 0 30px}.nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:48px}.brand{font-weight:900;letter-spacing:.08em}.brand span{color:var(--b)}.pill{font-size:12px;color:#cbd2e6;border:1px solid var(--line);background:#ffffff08;border-radius:999px;padding:9px 13px}.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:28px;align-items:stretch}.hero-copy{padding:25px 4px}.eyebrow{display:inline-flex;gap:8px;align-items:center;color:#b9c4dd;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.13em}.pulse{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 15px var(--ok)}h1{font-size:clamp(42px,7vw,76px);line-height:.95;margin:16px 0;background:linear-gradient(100deg,#fff 20%,#b8b5ff 55%,#6ce9ff);-webkit-background-clip:text;background-clip:text;color:transparent} .lead{max-width:600px;color:var(--muted);font-size:17px;line-height:1.7}.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}.stat{border:1px solid var(--line);background:#ffffff08;border-radius:15px;padding:12px 15px}.stat b{display:block;font-size:19px}.stat small{color:var(--muted)}
-.card{border:1px solid var(--line);background:linear-gradient(180deg,#131a2add,#0c111ddd);border-radius:25px;padding:24px;box-shadow:0 24px 70px #0008;backdrop-filter:blur(18px)}.card h2{margin:0 0 5px;font-size:23px}.sub{color:var(--muted);font-size:13px;margin:0 0 18px}.field{margin:14px 0}label{display:block;font-size:12px;font-weight:800;color:#cdd4e5;margin:0 0 8px;text-transform:uppercase;letter-spacing:.08em}input,select,button{width:100%;border-radius:14px;padding:14px 15px;font-size:15px;border:1px solid var(--line);outline:none}input,select{background:#060912;color:#fff}input:focus,select:focus{border-color:#7c5cff88;box-shadow:0 0 0 4px #7c5cff14}button{border:0;color:#fff;font-weight:900;background:linear-gradient(100deg,var(--a),var(--b));cursor:pointer;box-shadow:0 12px 30px #5f56ff2b}button:disabled{opacity:.55;cursor:wait}.result{display:none;margin-top:15px;border:1px solid var(--line);background:#050810;padding:14px;border-radius:14px;font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;word-break:break-word;max-height:300px;overflow:auto}.ready{display:flex;justify-content:space-between;align-items:center;border:1px solid #20e59a2a;background:#20e59a0b;padding:11px 12px;border-radius:13px;margin-bottom:14px}.ready b{color:var(--ok);font-size:13px}.ready span{color:var(--muted);font-size:12px}.features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}.feature{padding:20px;border:1px solid var(--line);border-radius:19px;background:#ffffff06}.feature b{display:block;margin-bottom:6px}.feature p{margin:0;color:var(--muted);font-size:13px;line-height:1.6}.docs{margin-top:28px}.code{margin-top:10px;border:1px solid var(--line);background:#050810;border-radius:14px;padding:14px;color:#cbd3e8;font:12px/1.7 ui-monospace,monospace;overflow:auto}.footer{padding:28px 0 8px;text-align:center;color:#727d96;font-size:12px}.footer strong{color:#b9c2d7}.server-list{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}.server{padding:6px 9px;border-radius:9px;background:#ffffff08;border:1px solid var(--line);font-size:11px;color:#b8c2d7}.server.on{color:var(--ok);border-color:#20e59a25}
-@media(max-width:820px){.hero{grid-template-columns:1fr}.hero-copy{padding-top:0}.features{grid-template-columns:1fr}.nav{margin-bottom:28px}h1{font-size:52px}}
+:root{
+  --bg:#060812;--panel:rgba(15,19,35,.72);--panel2:rgba(20,25,45,.86);
+  --line:rgba(255,255,255,.09);--text:#f7f8ff;--muted:#9ba4bd;
+  --a:#7c5cff;--b:#19d7ff;--good:#35e6a0;--danger:#ff6b88;
+  --shadow:0 30px 90px rgba(0,0,0,.45)
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:
+radial-gradient(900px 500px at 15% -5%,rgba(124,92,255,.25),transparent 60%),
+radial-gradient(800px 500px at 95% 10%,rgba(25,215,255,.16),transparent 58%),
+linear-gradient(180deg,#070914 0%,#05060d 100%);overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.35;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,#000,transparent 80%)}
+a{color:inherit}
+.wrap{width:min(1120px,92%);margin:auto}
+nav{height:78px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:3}
+.brand{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:.5px}
+.logo{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,var(--a),var(--b));box-shadow:0 12px 35px rgba(87,82,255,.35);font-size:18px}
+.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:2px;font-weight:700;margin-top:2px}
+.navlinks{display:flex;gap:9px}
+.navlinks a{text-decoration:none;color:#c6ccdc;padding:10px 13px;border-radius:12px;font-size:13px}
+.navlinks a:hover{background:rgba(255,255,255,.06);color:#fff}
+.hero{padding:72px 0 35px;text-align:center;position:relative}
+.badge{display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(53,230,160,.18);background:rgba(53,230,160,.06);padding:8px 13px;border-radius:999px;color:#8ff3c9;font-size:12px;font-weight:800;letter-spacing:.5px}
+.pulse{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 0 5px rgba(53,230,160,.08),0 0 16px var(--good)}
+h1{font-size:clamp(43px,8vw,86px);line-height:.93;margin:23px auto 18px;letter-spacing:-4px;max-width:900px}
+.gradient{background:linear-gradient(90deg,#fff 10%,#bbaeff 45%,#65e6ff 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{max-width:650px;margin:auto;color:var(--muted);font-size:16px;line-height:1.7}
+.hero-actions{margin-top:26px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:rgba(255,255,255,.045);color:#fff;text-decoration:none;padding:13px 18px;border-radius:14px;font-weight:800;font-size:13px;cursor:pointer}
+.btn.primary{border:0;background:linear-gradient(110deg,var(--a),var(--b));box-shadow:0 15px 35px rgba(68,93,255,.24)}
+.grid{display:grid;grid-template-columns:1.35fr .65fr;gap:18px;margin:28px 0 70px}
+.card{background:linear-gradient(180deg,rgba(20,25,45,.82),rgba(11,14,26,.78));border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);backdrop-filter:blur(18px)}
+.api-card{padding:25px}
+.card-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start;margin-bottom:18px}
+.card h2{font-size:21px;margin:0 0 6px}.sub{color:var(--muted);font-size:12px;line-height:1.5}
+.live{color:#91f3ca;font-size:11px;font-weight:900;display:flex;align-items:center;gap:7px}
+form{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.field{grid-column:span 1}.field.full{grid-column:1/-1}
+label{display:block;color:#b9c0d3;font-size:11px;font-weight:800;margin:0 0 7px;letter-spacing:.3px}
+input,select{width:100%;height:51px;border-radius:14px;border:1px solid var(--line);outline:none;background:rgba(4,7,15,.72);color:#fff;padding:0 14px;font:inherit}
+input:focus,select:focus{border-color:rgba(124,92,255,.7);box-shadow:0 0 0 4px rgba(124,92,255,.08)}
+.submit{grid-column:1/-1;height:54px;border:0;border-radius:15px;color:#fff;font-weight:900;cursor:pointer;background:linear-gradient(100deg,var(--a),#6658ff 45%,var(--b));box-shadow:0 16px 32px rgba(64,79,255,.22);font-size:14px}
+.submit:disabled{opacity:.6;cursor:wait}
+.result{display:none;margin-top:14px;border:1px solid var(--line);background:#05070e;border-radius:15px;padding:14px;color:#dfe4f4;font:12px/1.65 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;word-break:break-word}
+.side{padding:22px}
+.stat{padding:15px;border:1px solid var(--line);background:rgba(255,255,255,.025);border-radius:17px;margin-bottom:10px}
+.stat strong{display:block;font-size:19px}.stat span{color:var(--muted);font-size:11px}
+.servers{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:15px}
+.server{padding:12px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.025);text-align:center;font-size:11px;font-weight:800;color:#d8ddec}
+.server i{display:block;width:7px;height:7px;border-radius:50%;background:var(--good);margin:0 auto 7px;box-shadow:0 0 10px rgba(53,230,160,.7)}
+.section{padding:0 0 70px}.section-title{text-align:center;margin-bottom:25px}.section-title h2{font-size:30px;margin:0 0 7px}.section-title p{color:var(--muted);font-size:13px}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.feature{padding:21px;border-radius:20px}.icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:rgba(124,92,255,.13);margin-bottom:13px}.feature h3{margin:0 0 7px;font-size:15px}.feature p{margin:0;color:var(--muted);font-size:12px;line-height:1.65}
+.docs{padding:22px}.code{margin-top:14px;background:#05070d;border:1px solid var(--line);border-radius:15px;padding:15px;overflow:auto;color:#cdd6f7;font:12px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace}
+footer{padding:25px 0 40px;border-top:1px solid var(--line);color:#7f889f;font-size:11px;text-align:center}
+footer b{color:#cbd1e3}
+@media(max-width:820px){.grid{grid-template-columns:1fr}.features{grid-template-columns:1fr}.servers{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){nav{height:68px}.navlinks{display:none}.hero{padding-top:52px}h1{letter-spacing:-2.5px}.api-card,.side,.docs{padding:18px}form{grid-template-columns:1fr}.field,.field.full{grid-column:1}.hero p{font-size:14px}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header class="nav"><div class="brand">MODY <span>ELBANA</span></div><div class="pill">FREE FIRE • API PANEL</div></header>
-<section class="hero">
-<div class="hero-copy">
-<div class="eyebrow"><i class="pulse"></i> System online</div>
-<h1>MODY ELBANA<br>LIKE API</h1>
-<p class="lead">A clean, fast control panel for your Free Fire Like API. Choose the correct region, submit a UID, and inspect the response in a professional dashboard.</p>
-<div class="stats"><div class="stat"><b>8</b><small>Regions</small></div><div class="stat"><b>REST</b><small>API endpoint</small></div><div class="stat"><b>24/7</b><small>Ready for deploy</small></div></div>
-</div>
-<div class="card">
-<div class="ready"><b>● API ONLINE</b><span id="healthText">Checking…</span></div>
-<h2>Send Likes</h2><p class="sub">Enter a player UID and select its server.</p>
-<form id="likeForm">
-<div class="field"><label for="uid">Player UID</label><input id="uid" inputmode="numeric" autocomplete="off" placeholder="e.g. 123456789" required></div>
-<div class="field"><label for="server">Server</label><select id="server" required></select></div>
-<button id="submitBtn" type="submit">SEND LIKES →</button>
-<div id="result" class="result"></div>
-</form>
-</div>
+<nav>
+  <div class="brand"><div class="logo">M</div><div>MODY ELBANA<small>LIKE API</small></div></div>
+  <div class="navlinks"><a href="#api">API</a><a href="#features">Features</a><a href="#docs">Docs</a></div>
+</nav>
+
+<header class="hero">
+  <div class="badge"><span class="pulse"></span> SYSTEM ONLINE • API READY</div>
+  <h1>Fast. Clean.<br><span class="gradient">Built for Likes.</span></h1>
+  <p>A modern control panel for the MODY ELBANA Like API — simple requests, regional servers and a clean experience on every device.</p>
+  <div class="hero-actions"><a class="btn primary" href="#api">Open Control Panel</a><a class="btn" href="#docs">View Endpoint</a></div>
+</header>
+
+<section id="api" class="grid">
+  <div class="card api-card">
+    <div class="card-head">
+      <div><h2>Send Likes</h2><div class="sub">Enter a player UID and choose the target region.</div></div>
+      <div class="live"><span class="pulse"></span> ONLINE</div>
+    </div>
+    <form id="likeForm">
+      <div class="field full"><label for="uid">PLAYER UID</label><input id="uid" inputmode="numeric" autocomplete="off" placeholder="e.g. 1234567890" required></div>
+      <div class="field"><label for="server">REGION</label>
+        <select id="server">
+          <option value="ME">Middle East • ME</option><option value="BD">Bangladesh • BD</option><option value="IND">India • IND</option>
+          <option value="BR">Brazil • BR</option><option value="US">United States • US</option><option value="SAC">South America • SAC</option>
+          <option value="NA">North America • NA</option><option value="RU">Russia • RU</option>
+        </select>
+      </div>
+      <div class="field"><label>REQUEST MODE</label><input value="Smart regional pool" disabled></div>
+      <button class="submit" id="submitBtn" type="submit">SEND LIKES →</button>
+    </form>
+    <div class="result" id="result"></div>
+  </div>
+
+  <aside class="card side">
+    <div class="stat"><strong>8 Regions</strong><span>Regional routing enabled</span></div>
+    <div class="stat"><strong>Smart Pool</strong><span>Uses the selected account pool</span></div>
+    <div class="stat"><strong>Responsive UI</strong><span>Mobile, tablet & desktop ready</span></div>
+    <div style="margin-top:17px;font-size:11px;color:#9ba4bd;font-weight:800">SUPPORTED SERVERS</div>
+    <div class="servers">
+      <div class="server"><i></i>ME</div><div class="server"><i></i>BD</div><div class="server"><i></i>IND</div><div class="server"><i></i>BR</div>
+      <div class="server"><i></i>US</div><div class="server"><i></i>SAC</div><div class="server"><i></i>NA</div><div class="server"><i></i>RU</div>
+    </div>
+  </aside>
 </section>
-<section class="features">
-<div class="feature"><b>🌍 Multi-region</b><p>Region routing is centralized so every server uses its configured client cluster and account pool.</p></div>
-<div class="feature"><b>🛡️ Better errors</b><p>Invalid UID, missing accounts, token failures, rate limits, and verification errors return clear JSON.</p></div>
-<div class="feature"><b>⚡ Modern UI</b><p>Responsive glass-style interface designed for mobile and desktop deployments.</p></div>
+
+<section id="features" class="section">
+  <div class="section-title"><h2>Made to feel premium.</h2><p>Everything important, without the clutter.</p></div>
+  <div class="features">
+    <div class="card feature"><div class="icon">⚡</div><h3>Instant Control</h3><p>One focused panel for UID, region and request status with a fast, distraction-free workflow.</p></div>
+    <div class="card feature"><div class="icon">◈</div><h3>Regional Routing</h3><p>Choose the exact server region and let the existing backend route the request to its configured pool.</p></div>
+    <div class="card feature"><div class="icon">✓</div><h3>Clear Results</h3><p>Responses are shown directly in the dashboard so errors and successful requests are easy to inspect.</p></div>
+  </div>
 </section>
-<section class="card docs">
-<h2>API Endpoint</h2><p class="sub">Compatible with the existing GET interface.</p>
-<div class="code">GET /like?uid={UID}&amp;server_name={SERVER}&amp;key={API_KEY}</div>
-<div id="serverList" class="server-list"></div>
+
+<section id="docs" class="section">
+  <div class="section-title"><h2>Simple API</h2><p>Use the same backend endpoint from your own tools.</p></div>
+  <div class="card docs">
+    <div style="font-size:12px;color:#aeb7cd">GET REQUEST</div>
+    <div class="code">/like?uid={uid}&amp;server_name={server}&amp;key=SIAM</div>
+    <div style="margin-top:13px;font-size:11px;color:#7f889f">Example: /like?uid=1234567890&amp;server_name=ME&amp;key=SIAM</div>
+  </div>
 </section>
-<footer class="footer">Built for <strong>MODY ELBANA</strong> • Unofficial Free Fire community tool</footer>
+
+<footer>© 2026 <b>MODY ELBANA</b> • Like API Control Center</footer>
 </div>
+
 <script>
-const form=document.getElementById('likeForm'), result=document.getElementById('result'), btn=document.getElementById('submitBtn');
-const select=document.getElementById('server'), health=document.getElementById('healthText'), list=document.getElementById('serverList');
-async function loadServers(){
- try{const r=await fetch('/servers');const d=await r.json();select.innerHTML=d.servers.map(s=>`<option value="${s.code}" ${s.ready?'':'disabled'}>${s.code} — ${s.name}${s.ready?'':' (no accounts)'}</option>`).join('');list.innerHTML=d.servers.map(s=>`<span class="server ${s.ready?'on':''}">${s.code}: ${s.accounts}</span>`).join('');health.textContent=`${d.servers.filter(s=>s.ready).length}/${d.servers.length} regions ready`;}catch(e){health.textContent='Status unavailable';}
-}
-form.addEventListener('submit',async e=>{e.preventDefault();const uid=document.getElementById('uid').value.trim(),server=select.value;if(!/^\d+$/.test(uid)){result.style.display='block';result.textContent='UID must contain digits only.';return;}btn.disabled=true;result.style.display='block';result.textContent='Processing request…';try{const r=await fetch(`/like?uid=${encodeURIComponent(uid)}&server_name=${encodeURIComponent(server)}&key=SIAM`);const d=await r.json();result.textContent=JSON.stringify(d,null,2);}catch(err){result.textContent='Request failed: '+err.message;}finally{btn.disabled=false;}});
-loadServers();
+const form=document.getElementById('likeForm');
+const result=document.getElementById('result');
+const btn=document.getElementById('submitBtn');
+
+form.addEventListener('submit',async e=>{
+  e.preventDefault();
+  const uid=document.getElementById('uid').value.trim();
+  const server=document.getElementById('server').value;
+  result.style.display='block';
+  if(!/^\d+$/.test(uid)){result.textContent='Invalid UID — please enter numbers only.';return;}
+  btn.disabled=true; btn.textContent='PROCESSING…'; result.textContent='Sending request to the regional server…';
+  try{
+    const r=await fetch(`/like?uid=${encodeURIComponent(uid)}&server_name=${encodeURIComponent(server)}&key=SIAM`);
+    const data=await r.json();
+    result.textContent=JSON.stringify(data,null,2);
+  }catch(err){
+    result.textContent='Request failed: '+err.message;
+  }finally{
+    btn.disabled=false; btn.textContent='SEND LIKES →';
+  }
+});
 </script>
-</body></html>
+</body>
+</html>
