@@ -16,41 +16,42 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad
 from google.protobuf.json_format import MessageToJson
 
-# استيراد ملفات Protobuf الخاصة باللعبة
+# Import Protobuf modules
 import like_pb2
 import like_count_pb2
 import uid_generator_pb2
 
-# --- الإعدادات والمتغيرات العامة ---
+# --- Configurations & Global Variables ---
 API_KEY = "SIAM"
 KEY_LIMIT = 999
 TOKEN_CACHE = {}
 liked_cache = defaultdict(set)
-tracker = defaultdict(lambda: [0, time.time()])  # [عدد الطلبات, وقت التعديل]
+tracker = defaultdict(lambda: [0, time.time()])  # [request_count, last_reset_time]
 
 app = Flask(__name__)
+app.config['JSON_AS_ASCII'] = False
 
-# --- الدوال المساعدة (Helper Functions) ---
+# --- Helper Functions ---
 
 def get_today_midnight_timestamp():
-    """الحصول على طابع زمني لمنتصف الليل لليوم الحالي لتصفير العداد."""
+    """Get timestamp for today's midnight to reset counter."""
     now = datetime.now()
     midnight = datetime(now.year, now.month, now.day)
     return midnight.timestamp()
 
 def load_accounts(server_name):
-    """تحميل الحسابات (UID:Password) بناءً على السيرفر المحدد."""
+    """Load accounts (UID:Password) based on the specified server."""
     if server_name == "IND":
         filename = "account_ind.txt"
     elif server_name in {"BR", "US", "SAC", "NA"}:
         filename = "account_br.txt"
     elif server_name == "ME":
-        filename = "account_me.txt"  # ملف حسابات سيرفر الشرق الأوسط
+        filename = "account_me.txt"
     else:
         filename = "account_bd.txt"
 
     if not os.path.exists(filename):
-        print(f"⚠️ الملف {filename} غير موجود، جاري استخدام account_ind.txt كبديل")
+        print(f"⚠️ {filename} not found, falling back to account_ind.txt")
         filename = "account_ind.txt"
         if not os.path.exists(filename):
             return []
@@ -67,11 +68,11 @@ def load_accounts(server_name):
                     accounts.append({"uid": uid.strip(), "password": password.strip()})
         return accounts
     except Exception as e:
-        print(f"❌ خطأ أثناء قراءة ملف الحسابات: {e}")
+        print(f"❌ Error loading accounts: {e}")
         return []
 
 def encrypt_message(plaintext):
-    """تشفير البيانات باستخدام AES-CBC مع PKCS7 Padding."""
+    """Encrypt payload using AES-CBC with PKCS7 padding."""
     key = b'Yg&tc%DEuh6%Zc^8'
     iv = b'6oyZDr22E3ychjM%'
     cipher = AES.new(key, AES.MODE_CBC, iv)
@@ -98,10 +99,10 @@ def decode_protobuf(binary):
     except Exception:
         return None
 
-# --- إدارة الرموز والتفاعل مع API ---
+# --- Token & API Request Handlers ---
 
 async def generate_jwt_token(uid, password):
-    """جلب رمز JWT من خدمة خارجية."""
+    """Fetch JWT token from external service."""
     try:
         encoded_password = urllib.parse.quote(password)
         url = f"https://jihad-jwt.lovable.app/api/public/token?uid={uid}&password={encoded_password}"
@@ -116,7 +117,7 @@ async def generate_jwt_token(uid, password):
     return None
 
 async def get_valid_token(uid, password):
-    """استرجاع توكن صالح من الذاكرة المؤقتة أو توليد توكن جديد."""
+    """Retrieve cached token or generate a new one."""
     if uid in TOKEN_CACHE:
         cached = TOKEN_CACHE[uid]
         remaining = (cached["expires_at"] - datetime.utcnow()).total_seconds()
@@ -143,7 +144,7 @@ async def get_valid_token(uid, password):
     return token
 
 async def send_like(encrypted_uid, token, url):
-    """إرسال طلب الإعجاب إلى خوادم اللعبة."""
+    """Send like request to game servers."""
     try:
         edata = bytes.fromhex(encrypted_uid)
         headers = {
@@ -160,7 +161,7 @@ async def send_like(encrypted_uid, token, url):
         return 500
 
 async def process_account(target_uid, encrypted_uid, account, url, semaphore):
-    """معالجة حساب واحد مع التحكم في معدل التزامن."""
+    """Process single account with concurrency control."""
     async with semaphore:
         token = await get_valid_token(account['uid'], account['password'])
         if not token:
@@ -172,7 +173,7 @@ async def process_account(target_uid, encrypted_uid, account, url, semaphore):
         return status, account['uid']
 
 async def send_all_likes(target_uid, server_name, url):
-    """إرسال الإعجابات باستخدام جميع الحسابات المتاحة بشكل غير متزامن."""
+    """Send likes from available accounts asynchronously."""
     protobuf_message = create_protobuf_message(target_uid, server_name)
     encrypted_uid = encrypt_message(protobuf_message)
     
@@ -213,13 +214,13 @@ async def send_all_likes(target_uid, server_name, url):
     }
 
 def get_player_info(encrypted_uid, server_name, token):
-    """جلب معلومات اللاعب للتأكد من عدد الإعجابات قبل وبعد التنفيذ."""
+    """Fetch player information before and after like execution."""
     if server_name == "IND":
         url = "https://client.ind.freefiremobile.com/GetPlayerPersonalShow"
     elif server_name in {"BR", "US", "SAC", "NA"}:
         url = "https://client.us.freefiremobile.com/GetPlayerPersonalShow"
     elif server_name == "ME":
-        url = "https://client.me.freefiremobile.com/GetPlayerPersonalShow"  # رابط سيرفر الشرق الأوسط
+        url = "https://client.me.freefiremobile.com/GetPlayerPersonalShow"
     else:
         url = "https://clientbp.ggpolarbear.com/GetPlayerPersonalShow"
 
@@ -238,7 +239,7 @@ def get_player_info(encrypted_uid, server_name, token):
     except Exception:
         return None
 
-# --- نقاط النهاية (Endpoints) ---
+# --- API Endpoints ---
 
 @app.route("/", methods=["GET"])
 def home():
@@ -252,21 +253,20 @@ def handle_requests():
     client_ip = request.remote_addr
 
     if key != API_KEY:
-        return jsonify({"error": "مفتاح API غير صحيح أو مفقود 🔑"}), 403
+        return jsonify({"error": "Invalid or missing API key 🔑"}), 403
 
     if not uid or not server_name:
-        return jsonify({"error": "معرف UID واسم السيرفر مطلوبان"}), 400
+        return jsonify({"error": "UID and server_name are required"}), 400
 
-    # إضافة ME إلى القائمة
     valid_servers = ["IND", "BR", "US", "SAC", "NA", "BD", "RU", "ME"]
     if server_name not in valid_servers:
-        return jsonify({"error": f"سيرفر غير صالح. السيرفرات المتاحة: {valid_servers}"}), 400
+        return jsonify({"error": f"Invalid server. Available servers: {valid_servers}"}), 400
 
     accounts = load_accounts(server_name) or load_accounts("IND")
     if not accounts:
-        return jsonify({"error": f"لم يتم العثور على حسابات للسيرفر {server_name}"}), 500
+        return jsonify({"error": f"No accounts found for server {server_name}"}), 500
 
-    # التحقق من الحد اليومي للطلب
+    # Check daily limit
     today_midnight = get_today_midnight_timestamp()
     count, last_reset = tracker[client_ip]
 
@@ -275,9 +275,9 @@ def handle_requests():
         count = 0
 
     if count >= KEY_LIMIT:
-        return jsonify({"error": "تم الوصول للحد اليومي", "remains": f"(0/{KEY_LIMIT})"}), 429
+        return jsonify({"error": "Daily limit reached", "remains": f"(0/{KEY_LIMIT})"}), 429
 
-    # جلب توكن للتحقق
+    # Generate token for validation
     check_token = None
     for account in accounts[:5]:
         check_token = asyncio.run(get_valid_token(account['uid'], account['password']))
@@ -285,38 +285,38 @@ def handle_requests():
             break
     
     if not check_token:
-        return jsonify({"error": "فشل توليد التوكن - لا توجد حسابات صالحة"}), 500
+        return jsonify({"error": "Token generation failed - no valid accounts"}), 500
     
     encrypted_uid = enc(uid)
 
-    # جلب معلومات الملف الشخصي قبل الإعجابات
+    # Fetch info before likes
     before = get_player_info(encrypted_uid, server_name, check_token)
     if before is None:
-        return jsonify({"error": "UID غير صحيح أو السيرفر غير مطابق", "status": 0}), 200
+        return jsonify({"error": "Invalid UID or server mismatch", "status": 0}), 200
 
     try:
         before_data = json.loads(MessageToJson(before))
         before_like = int(before_data['AccountInfo'].get('Likes', 0))
     except Exception:
-        return jsonify({"error": "فشل في معالجة البيانات", "status": 0}), 200
+        return jsonify({"error": "Data parsing failed", "status": 0}), 200
 
-    # تحديد رابط الإعجاب حسب السيرفر (إضافة ME)
+    # Determine like URL by server
     if server_name == "IND":
         like_url = "https://client.ind.freefiremobile.com/LikeProfile"
     elif server_name in {"BR", "US", "SAC", "NA"}:
         like_url = "https://client.us.freefiremobile.com/LikeProfile"
     elif server_name == "ME":
-        like_url = "https://client.me.freefiremobile.com/LikeProfile"  # رابط الإعجاب لسيرفر الشرق الأوسط
+        like_url = "https://client.me.freefiremobile.com/LikeProfile"
     else:
         like_url = "https://clientbp.ggpolarbear.com/LikeProfile"
 
-    # تنفيذ إرسال الإعجابات
+    # Send likes
     asyncio.run(send_all_likes(uid, server_name, like_url))
 
-    # جلب معلومات الملف الشخصي بعد إرسال الإعجابات
+    # Fetch info after likes
     after = get_player_info(encrypted_uid, server_name, check_token)
     if after is None:
-        return jsonify({"error": "تعذر التحقق من الإعجابات بعد التنفيذ", "status": 0}), 200
+        return jsonify({"error": "Could not verify likes after command", "status": 0}), 200
 
     try:
         after_data = json.loads(MessageToJson(after))
@@ -347,13 +347,13 @@ def handle_requests():
 
 @app.route('/reset-cache', methods=['GET'])
 def reset_cache():
-    """مسح الذاكرة المؤقتة للحسابات التي أرسلت إعجابات."""
+    """Reset liked accounts cache."""
     key = request.args.get("key")
     if key != API_KEY:
-        return jsonify({"error": "مفتاح غير صحيح"}), 403
+        return jsonify({"error": "Invalid key"}), 403
     
     liked_cache.clear()
-    return jsonify({"message": "تم مسح الذاكرة المؤقتة بنجاح"})
+    return jsonify({"message": "Cache cleared successfully"})
 
 if __name__ == '__main__':
     print("🚀 Server started - Smart Like System!")
