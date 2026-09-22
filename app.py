@@ -183,33 +183,14 @@ async def send_like(encrypted_uid, token, url):
             'Authorization': f"Bearer {token}",
             'Content-Type': "application/x-www-form-urlencoded",
             'X-GA': "v1 1",
-            'ReleaseVersion': "OB55",
-            'X-Unity-Version': "2018.4.11f1",
-            'Accept': "*/*",
-            'Accept-Encoding': "gzip, deflate, br",
-            'Accept-Language': "en-GB,en-US;q=0.9,en;q=0.8",
-            'Connection': "keep-alive",
-            'Host': urllib.parse.urlparse(url).netloc,
+            'ReleaseVersion': "OB55"
         }
-
+        
         async with aiohttp.ClientSession() as session:
-            async with session.post(url, data=edata, headers=headers, timeout=10) as response:
-                raw = await response.read()
-                content_type = response.headers.get('Content-Type', '')
-                try:
-                    body_text = raw.decode('utf-8', errors='replace')
-                except Exception:
-                    body_text = ''
-                # Keep diagnostics bounded and never include Authorization/token data.
-                detail = {
-                    'content_type': content_type,
-                    'body_text': body_text[:500],
-                    'body_hex': raw[:160].hex(),
-                    'body_length': len(raw),
-                }
-                return response.status, detail
-    except Exception as exc:
-        return 500, {'error': str(exc)[:300]}
+            async with session.post(url, data=edata, headers=headers, timeout=5) as response:
+                return response.status
+    except:
+        return 500
 
 async def process_account(target_uid, encrypted_uid, account, url, semaphore, server_name):
     """Process single account with smart checking"""
@@ -223,14 +204,14 @@ async def process_account(target_uid, encrypted_uid, account, url, semaphore, se
             return 500, account['uid']
         
         # Send like
-        status, detail = await send_like(encrypted_uid, token, url)
+        status = await send_like(encrypted_uid, token, url)
         
         # If successful, mark as liked
         if status == 200:
             liked_cache[target_uid].add(account['uid'])
-            return status, account['uid'], detail
+            return status, account['uid']
         
-        return status, account['uid'], detail
+        return status, account['uid']
 
 async def send_all_likes(target_uid, server_name, url):
     """Send likes from all accounts with smart checking"""
@@ -270,33 +251,20 @@ async def send_all_likes(target_uid, server_name, url):
     
     successful = 0
     failed = 0
-    status_counts = {}
-    samples = []
-    success_samples = []
     for r in results:
-        if isinstance(r, tuple) and len(r) == 3:
-            status, uid, detail = r
-            status_counts[str(status)] = status_counts.get(str(status), 0) + 1
+        if isinstance(r, tuple):
+            status, uid = r
             if status == 200:
                 successful += 1
-                if len(success_samples) < 5:
-                    success_samples.append({'status': status, 'detail': detail})
             else:
                 failed += 1
-                if len(samples) < 5:
-                    samples.append({'status': status, 'detail': detail})
-        else:
-            failed += 1
     
     return {
         'success': successful,
         'failed': failed,
         'total': len(accounts),
         'already_liked': len(already_liked),
-        'fresh_used': len(fresh_accounts[:2000]),
-        'http_status_counts': status_counts,
-        'failure_samples': samples,
-        'success_samples': success_samples
+        'fresh_used': len(fresh_accounts[:2000])
     }
 
 def enc(uid):
@@ -448,7 +416,6 @@ def handle_requests():
             "PlayerNickname": player_name,
             "UID": player_id,
             "status": status,
-            "send_result": result,
             "remains": f"({remains}/{KEY_LIMIT})",    
         })
     except Exception as e:
